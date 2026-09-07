@@ -64,10 +64,11 @@
 
 
 // server.js
+// server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // 👈 Naya import static files ke liye
+const path = require('path'); 
 
 // --- DATABASE CONNECTION ---
 const connectDB = require('./config/db');
@@ -110,13 +111,12 @@ app.use('/api/store', storeRoutes);
 
 // --- 🟢 PRODUCTION: SERVE FRONTEND STATIC FILES ---
 if (process.env.NODE_ENV === 'production') {
-    // Yeh path assume karta hai ki backend aur frontend ek hi repo mein hain 
-    // aur backend folder ke barabar mein 'frontend/dist' folder banta hai.
     const frontendDistPath = path.join(__dirname, '../frontend/dist');
     
     app.use(express.static(frontendDistPath));
 
-    app.get('*', (req, res) => {
+    // 👇 FIXED: '*' ki jagah ' /(.*) ' use kiya gaya hai
+    app.get('/(.*)', (req, res) => {
         res.sendFile(path.join(frontendDistPath, 'index.html'));
     });
 }
