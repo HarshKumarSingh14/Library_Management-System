@@ -26,7 +26,7 @@ export default function AdminStoreOrders() {
     setLoading(true);
     try {
       // Bina email ke call karenge toh sabhi orders aayenge
-      const response = await fetch("http://localhost:5000/api/store/orders");
+      const response = await fetch("/api/store/orders");
       if (!response.ok) throw new Error("Failed to fetch orders");
       
       const data = await response.json();
