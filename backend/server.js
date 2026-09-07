@@ -115,8 +115,8 @@ if (process.env.NODE_ENV === 'production') {
     
     app.use(express.static(frontendDistPath));
 
-    // 👇 FIXED: '*' ki jagah ' /(.*) ' use kiya gaya hai
-    app.get('/(.*)', (req, res) => {
+    // 👇 FIXED: Regex object use kiya hai jo /api wali requests ko chhod kar baaki sab handle karega
+    app.get(/^(?!\/api).*/, (req, res) => {
         res.sendFile(path.join(frontendDistPath, 'index.html'));
     });
 }
