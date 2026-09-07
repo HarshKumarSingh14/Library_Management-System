@@ -34,7 +34,7 @@ export default function AdminDashboard() {
     const fetchAdminData = async () => {
       try {
         const token = localStorage.getItem("library_token");
-        const response = await fetch(`http://localhost:5000/api/dashboard/admin`, {
+        const response = await fetch(`/api/dashboard/admin`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
