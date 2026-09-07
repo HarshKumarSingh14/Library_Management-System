@@ -17,7 +17,7 @@ export default function AdminRequests() {
   // Fetch pending requests
   const fetchRequests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/transactions/pending");
+      const res = await fetch("/api/transactions/pending");
       const data = await res.json();
       setRequests(data);
     } finally {
