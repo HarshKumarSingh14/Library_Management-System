@@ -31,7 +31,7 @@ export default function AdminPurchaseHistoryPage() {
   const fetchAdminHistory = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/store/orders");
+      const response = await fetch("/api/store/orders");
       if (!response.ok) throw new Error("Failed to load history");
 
       const data = await response.json();
