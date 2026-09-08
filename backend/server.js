@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: ["http://localhost:8080", "http://localhost:5173", "http://localhost:3000"], 
+    origin: ["https://bookify-library14.netlify.app"], 
     credentials: true 
 }));
 
