@@ -10,7 +10,7 @@ export default function ReportsPage() {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/transactions/reports/summary");
+      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/reports/summary");
       if (!res.ok) throw new Error("Failed to fetch reports");
       const result = await res.json();
       setData(result);
