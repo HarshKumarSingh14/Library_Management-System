@@ -8,34 +8,45 @@ import {
   ShieldCheck, 
   Book,
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  QrCode,
+  ExternalLink
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext"; // Ensure you have this
-import { toast } from "sonner"; // Ensure you have this
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export default function PaymentPage() {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Dashboard ya Store se aane wala dynamic data catch karna
-  // type: 'fine' ya 'book' hoga
   const { type, itemId, amount, title } = location.state || {};
 
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'netbanking'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi'>('card');
+  const [upiSubMethod, setUpiSubMethod] = useState<'qr' | 'app'>('qr');
   const [status, setStatus] = useState<'idle' | 'processing' | 'success'>('idle');
 
-  // Agar user directly URL type karke aata hai bina data ke, toh wapas bhej do
+  // Card form states
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvv, setCvv] = useState('');
+
   useEffect(() => {
     if (!type || !amount) {
-      navigate(-1); // Go back to wherever they came from
+      navigate(-1);
     }
   }, [type, amount, navigate]);
 
   const handlePayment = async () => {
+    if (paymentMethod === 'card') {
+      if (!cardNumber || !expiry || !cvv) {
+        toast.error("Please fill in your card details.");
+        return;
+      }
+    }
+
     setStatus('processing');
     
-    // Dynamic API Endpoint based on payment type
     const apiEndpoint = type === 'book' 
       ? "http://localhost:5000/api/store/checkout" 
       : "http://localhost:5000/api/library/pay-fine";
@@ -45,9 +56,11 @@ export default function PaymentPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          studentId: user?.id || 1, 
-          itemId: itemId, // yeh bookId ya fineId hoga
-          title: title,
+          studentId: user?._id || user?.id || "645a1b2c3d4e5f6789012345", 
+          studentName: user?.name || "Student",
+          studentEmail: user?.email || "student@gmail.com",
+          bookId: itemId, 
+          bookTitle: title,
           amount: amount,
           paymentMethod: paymentMethod
         })
@@ -58,7 +71,6 @@ export default function PaymentPage() {
       if (response.ok && data.success) {
         setStatus('success');
         
-        // Success hone ke baad thodi der ruk kar sahi jagah wapas bhejo
         setTimeout(() => {
           if (type === 'book') navigate('/store', { replace: true });
           if (type === 'fine') navigate('/dashboard', { replace: true });
@@ -72,6 +84,18 @@ export default function PaymentPage() {
       setStatus('idle');
       toast.error("Could not connect to payment server.");
     }
+  };
+
+  const handleAppRedirect = (appName: 'gpay' | 'phonepe') => {
+    const upiLink = `upi://pay?pa=librarysystem@oksbi&pn=LibraryManagement&am=${amount}&cu=INR`;
+    
+    toast.info(`Redirecting to ${appName === 'gpay' ? 'Google Pay' : 'PhonePe'}...`);
+    
+    window.location.href = upiLink;
+
+    setTimeout(() => {
+      handlePayment();
+    }, 3000);
   };
 
   if (!amount) return null;
@@ -106,11 +130,10 @@ export default function PaymentPage() {
           {status === 'idle' && (
             <div className="space-y-6">
               
-              {/* Dynamic Order Summary */}
+              {/* Order Summary */}
               <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary/20 p-2 rounded-lg">
-                    {/* Icon changes based on type */}
                     {type === 'fine' ? (
                       <AlertCircle className="h-5 w-5 text-primary" />
                     ) : (
@@ -118,7 +141,6 @@ export default function PaymentPage() {
                     )}
                   </div>
                   <div>
-                    {/* Title changes based on type */}
                     <p className="text-sm font-medium">
                       {type === 'fine' ? 'Library Fine' : 'Book Purchase'}
                     </p>
@@ -130,29 +152,137 @@ export default function PaymentPage() {
                 </div>
               </div>
 
-              {/* Payment Methods */}
+              {/* Payment Methods Selection */}
               <div className="space-y-3">
                 <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Select Method</p>
                 
-                <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'hover:bg-muted/50'}`}>
-                  <input type="radio" name="method" className="hidden" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} />
-                  <CreditCard className={`h-5 w-5 ${paymentMethod === 'card' ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className="font-medium">Credit / Debit Card</span>
+                {/* Card Option */}
+                <label className={`flex flex-col gap-3 p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'hover:bg-muted/50'}`}>
+                  <div className="flex items-center gap-3">
+                    <input type="radio" name="method" className="hidden" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} />
+                    <CreditCard className={`h-5 w-5 ${paymentMethod === 'card' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <span className="font-medium">Credit / Debit Card (Under Processing Safe)</span>
+                  </div>
+                  
+                  {paymentMethod === 'card' && (
+                    <div className="space-y-3 pt-2 animate-in fade-in duration-300">
+                      <input 
+                        type="text" 
+                        placeholder="Card Number (4111 2222 ...)" 
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        className="w-full px-3 py-2 text-sm rounded-lg border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                        maxLength={19}
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input 
+                          type="text" 
+                          placeholder="MM/YY" 
+                          value={expiry}
+                          onChange={(e) => setExpiry(e.target.value)}
+                          className="w-full px-3 py-2 text-sm rounded-lg border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                          maxLength={5}
+                        />
+                        <input 
+                          type="password" 
+                          placeholder="CVV" 
+                          value={cvv}
+                          onChange={(e) => setCvv(e.target.value)}
+                          className="w-full px-3 py-2 text-sm rounded-lg border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                          maxLength={4}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </label>
 
-                <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'hover:bg-muted/50'}`}>
-                  <input type="radio" name="method" className="hidden" checked={paymentMethod === 'upi'} onChange={() => setPaymentMethod('upi')} />
-                  <Smartphone className={`h-5 w-5 ${paymentMethod === 'upi' ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className="font-medium">UPI (GPay, PhonePe)</span>
+                {/* UPI Option */}
+                <label className={`flex flex-col gap-3 p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === 'upi' ? 'border-primary ring-1 ring-primary bg-primary/5' : 'hover:bg-muted/50'}`}>
+                  <div className="flex items-center gap-3">
+                    <input type="radio" name="method" className="hidden" checked={paymentMethod === 'upi'} onChange={() => setPaymentMethod('upi')} />
+                    <Smartphone className={`h-5 w-5 ${paymentMethod === 'upi' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <span className="font-medium">UPI Apps / QR Code</span>
+                  </div>
+
+                  {paymentMethod === 'upi' && (
+                    <div className="space-y-3 pt-2 animate-in fade-in duration-300">
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setUpiSubMethod('qr')}
+                          className={`py-2 px-3 text-xs font-semibold rounded-lg border flex items-center justify-center gap-1.5 transition-all ${upiSubMethod === 'qr' ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted'}`}
+                        >
+                          <QrCode className="h-4 w-4" /> Pay by QR
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setUpiSubMethod('app')}
+                          className={`py-2 px-3 text-xs font-semibold rounded-lg border flex items-center justify-center gap-1.5 transition-all ${upiSubMethod === 'app' ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted'}`}
+                        >
+                          <Smartphone className="h-4 w-4" /> GPay / PhonePe
+                        </button>
+                      </div>
+
+                      {/* Submethod 1: QR Code display */}
+                      {upiSubMethod === 'qr' && (
+                        <div className="flex flex-col items-center justify-center p-4 bg-background rounded-xl border space-y-2">
+                          <div className="bg-white p-2 rounded-lg shadow-sm border">
+                            <img 
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=librarysystem@oksbi&pn=LibraryManagement&am=${amount}&cu=INR`} 
+                              alt="Payment QR Code"
+                              className="w-32 h-32 object-contain"
+                            />
+                          </div>
+                          <p className="text-[11px] text-muted-foreground text-center">Scan using GPay, PhonePe or Paytm</p>
+                          <button
+                            type="button"
+                            onClick={handlePayment}
+                            className="w-full mt-2 py-2.5 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-primary/90 transition-all shadow-sm"
+                          >
+                            PAY NOW
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Submethod 2: App Redirect buttons */}
+                      {upiSubMethod === 'app' && (
+                        <div className="space-y-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleAppRedirect('gpay')}
+                            className="w-full py-2.5 px-4 bg-background border hover:bg-muted/50 rounded-xl text-xs font-semibold flex items-center justify-between transition-all"
+                          >
+                            <span className="flex items-center gap-2">
+                              <span className="h-2 w-2 rounded-full bg-blue-500"></span> Google Pay (GPay)
+                            </span>
+                            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={() => handleAppRedirect('phonepe')}
+                            className="w-full py-2.5 px-4 bg-background border hover:bg-muted/50 rounded-xl text-xs font-semibold flex items-center justify-between transition-all"
+                          >
+                            <span className="flex items-center gap-2">
+                              <span className="h-2 w-2 rounded-full bg-purple-500"></span> PhonePe
+                            </span>
+                            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </label>
               </div>
 
-              <button 
-                onClick={handlePayment}
-                className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-all shadow-md active:scale-[0.98] mt-4"
-              >
-                Pay ₹{amount} Securely
-              </button>
+              {paymentMethod === 'card' && (
+                <button 
+                  onClick={handlePayment}
+                  className="w-full py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-all shadow-md active:scale-[0.98] mt-4"
+                >
+                  Pay ₹{amount} Securely
+                </button>
+              )}
             </div>
           )}
 
@@ -165,7 +295,7 @@ export default function PaymentPage() {
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-bold">Processing Payment</h3>
                 <p className="text-sm text-muted-foreground px-4">
-                  Please do not close this window or press back.
+                  Please do not close this window or press back. Under processing...
                 </p>
               </div>
             </div>
@@ -178,7 +308,6 @@ export default function PaymentPage() {
               </div>
               <h3 className="text-2xl font-bold text-green-600">Payment Successful!</h3>
               
-              {/* Dynamic Success Message */}
               <p className="text-muted-foreground text-center">
                 {type === 'fine' 
                   ? `Your fine of ₹${amount} has been cleared.` 
