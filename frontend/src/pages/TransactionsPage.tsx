@@ -92,7 +92,7 @@ export default function TransactionsPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/transactions/issue", {
+      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/issue", {
         method: "POST",
         headers: getAuthHeaders(), // Yahan bhi Token zaroori hai
         body: JSON.stringify({
