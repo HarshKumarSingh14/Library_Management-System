@@ -43,7 +43,7 @@ export default function SearchPage() {
   const searchFromDB = async (searchTerm: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/books/search?q=${searchTerm}`);
+      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/books/search?q=${searchTerm}`);
       if (!res.ok) throw new Error("Search failed");
       const data = await res.json();
       setResults(data);
@@ -65,7 +65,7 @@ export default function SearchPage() {
 
     setBtnLoading(bookId); 
     try {
-      const res = await fetch(`http://localhost:5000/api/transactions/request`, {
+      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/transactions/request`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
