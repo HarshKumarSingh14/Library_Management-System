@@ -18,7 +18,7 @@ export interface BookType {
 
 export default function BookStore() {
   // Backend URL config (Change this if your server port is different)
-  const API_BASE = "http://localhost:5000/api/store"; 
+  const API_BASE = "https://library-management-system-fdo2.onrender.com/api/store"; 
   
   // --- States ---
   const [books, setBooks] = useState<BookType[]>([]);
