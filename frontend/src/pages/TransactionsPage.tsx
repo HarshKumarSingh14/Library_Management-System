@@ -37,9 +37,9 @@ export default function TransactionsPage() {
     try {
       // Har fetch call mein headers pass karna zaroori hai
       const [sRes, bRes, tRes] = await Promise.all([
-        fetch("http://localhost:5000/api/students/all", { headers: getAuthHeaders() }),
-        fetch("http://localhost:5000/api/books", { headers: getAuthHeaders() }),
-        fetch("http://localhost:5000/api/transactions/active", { headers: getAuthHeaders() })
+        fetch("https://library-management-system-fdo2.onrender.com/api/students/all", { headers: getAuthHeaders() }),
+        fetch("https://library-management-system-fdo2.onrender.com/api/books", { headers: getAuthHeaders() }),
+        fetch("https://library-management-system-fdo2.onrender.com/api/transactions/active", { headers: getAuthHeaders() })
       ]);
 
       if (sRes.status === 401 || bRes.status === 401) {
@@ -128,7 +128,7 @@ export default function TransactionsPage() {
     if(!window.confirm(confirmMsg)) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/transactions/return", {
+      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/return", {
         method: "POST",
         headers: getAuthHeaders(), // Yahan bhi Token zaroori hai
         body: JSON.stringify({
