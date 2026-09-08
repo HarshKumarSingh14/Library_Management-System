@@ -81,7 +81,7 @@ export default function ResourcePage({ pageType }: ResourcePageProps) {
     console.log("Strict Fetching for:", params);
 
     try {
-      const response = await axios.get("http://localhost:5000/api/resources", { params });
+      const response = await axios.get("https://library-management-system-fdo2.onrender.com/api/resources", { params });
       setResources(response.data);
     } catch (error) { 
       console.error("Fetch Error:", error);
@@ -117,7 +117,7 @@ export default function ResourcePage({ pageType }: ResourcePageProps) {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/resources/add", formData);
+      await axios.post("https://library-management-system-fdo2.onrender.com/api/resources/add", formData);
       setIsUploadOpen(false);
       setNewResource({ title: "", course: "B.TECH", branch: "CS", year: "1", url: "" });
       setSelectedFile(null);
