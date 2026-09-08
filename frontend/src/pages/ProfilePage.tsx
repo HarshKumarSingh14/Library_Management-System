@@ -73,7 +73,7 @@ export default function ProfilePage() {
 
       const imageUrl = cloudData.secure_url;
 
-      const res = await fetch("http://localhost:5000/api/auth/update-profile-pic", {
+      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/auth/update-profile-pic", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export default function ProfilePage() {
     
     setIsSaving(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/update-profile`, {
+      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/auth/update-profile`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function ProfilePage() {
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/delete-account`, {
+      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/auth/delete-account`, {
         method: "DELETE",
         headers: { 
           "Content-Type": "application/json",
