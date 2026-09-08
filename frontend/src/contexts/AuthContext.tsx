@@ -16,7 +16,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_URL = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL}/api/auth` 
-  : (import.meta.env.MODE === 'production' ? '/api/auth' : "http://localhost:5000/api/auth");
+  : (import.meta.env.MODE === 'production' ? '/api/auth' : "https://library-management-system-fdo2.onrender.com/api/auth");
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
