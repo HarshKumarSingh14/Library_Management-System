@@ -30,7 +30,7 @@ export default function SearchPage() {
   const fetchAllBooks = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/books");
+      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/books");
       const data = await res.json();
       setResults(data);
     } catch (err) {
