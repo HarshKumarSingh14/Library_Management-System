@@ -60,8 +60,6 @@
 //     process.exit(1);
 // });
 
-
-
 // server.js
 
 require('dotenv').config();
@@ -84,18 +82,16 @@ const storeRoutes = require('./routes/store');
 
 const app = express();
 
-// Render apna PORT provide karega
 const PORT = process.env.PORT || 5000;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 
 // =====================================================
 // MIDDLEWARE
 // =====================================================
 
-// JSON request body limit
 app.use(express.json({ limit: '1mb' }));
 
-// URL encoded body limit
 app.use(express.urlencoded({
     extended: true,
     limit: '1mb'
@@ -107,14 +103,15 @@ app.use(express.urlencoded({
 // =====================================================
 
 const allowedOrigins = [
-    'https://bookify-library14.netlify.app'
-];
+    FRONTEND_URL,
+    'http://localhost:5173',
+    'http://localhost:3000'
+].filter(Boolean);
 
 app.use(cors({
     origin: function (origin, callback) {
 
-        // Allow requests with no origin
-        // (Postman, curl, server-to-server requests, etc.)
+        // Requests without Origin
         if (!origin) {
             return callback(null, true);
         }
@@ -130,13 +127,13 @@ app.use(cors({
 
 
 // =====================================================
-// HEALTH / ROOT ROUTE
+// ROOT ROUTE
 // =====================================================
 
 app.get('/', (req, res) => {
     res.status(200).json({
         status: 'success',
-        message: 'Library API is Running...'
+        message: 'CodeSage & Library API is Running...'
     });
 });
 
@@ -174,15 +171,12 @@ app.use((err, req, res, next) => {
 
     console.error('❌ Server Error:', err);
 
-    // CORS error
     if (err.message === 'Not allowed by CORS') {
         return res.status(403).json({
             message: 'Access denied'
         });
     }
 
-    // Production mein internal error details
-    // client ko expose nahi karenge
     res.status(500).json({
         message: 'Internal Server Error'
     });
@@ -214,5 +208,3 @@ const startServer = async () => {
 };
 
 startServer();
-
-
