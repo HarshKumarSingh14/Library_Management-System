@@ -1,92 +1,306 @@
-require('dotenv').config();
+// require('dotenv').config();
 
-const express = require('express');
-const cors = require('cors');
+// const express = require('express');
+// const cors = require('cors');
 
-// --- DATABASE CONNECTION ---
-const connectDB = require('./config/db');
+// // --- DATABASE CONNECTION ---
+// const connectDB = require('./config/db');
 
-// --- ROUTE IMPORTS ---
-const bookRoutes = require('./routes/bookRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-const authRoutes = require('./routes/authRoutes');
-const studentRoutes = require('./routes/studentRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const resourceRoutes = require('./routes/resourceRoutes');
-const storeRoutes = require('./routes/store');
+// // --- ROUTE IMPORTS ---
+// const bookRoutes = require('./routes/bookRoutes');
+// const dashboardRoutes = require('./routes/dashboardRoutes');
+// const authRoutes = require('./routes/authRoutes');
+// const studentRoutes = require('./routes/studentRoutes');
+// const transactionRoutes = require('./routes/transactionRoutes');
+// const chatRoutes = require('./routes/chatRoutes');
+// const resourceRoutes = require('./routes/resourceRoutes');
+// const storeRoutes = require('./routes/store');
+
+// const app = express();
+
+// const PORT = process.env.PORT || 5000;
+// const FRONTEND_URL = process.env.FRONTEND_URL;
+
+
+// // =====================================================
+// // MIDDLEWARE
+// // =====================================================
+
+// app.use(express.json({ limit: '1mb' }));
+
+// app.use(express.urlencoded({
+//     extended: true,
+//     limit: '1mb'
+// }));
+
+
+// // =====================================================
+// // CORS
+// // =====================================================
+
+// const allowedOrigins = [
+//     FRONTEND_URL
+//     // 'http://localhost:8080',
+//     // 'http://localhost:3000'
+// ].filter(Boolean);
+
+// app.use(cors({
+//     origin: function (origin, callback) {
+
+//         // Requests without Origin
+//         if (!origin) {
+//             return callback(null, true);
+//         }
+
+//         if (allowedOrigins.includes(origin)) {
+//             return callback(null, true);
+//         }
+
+//         return callback(new Error('Not allowed by CORS'));
+//     },
+//     credentials: true
+// }));
+
+
+// // =====================================================
+// // ROOT ROUTE
+// // =====================================================
+
+// app.get('/', (req, res) => {
+//     res.status(200).json({
+//         status: 'success',
+//         message: 'CodeSage & Library API is Running...'
+//     });
+// });
+
+
+// // =====================================================
+// // API ROUTES
+// // =====================================================
+
+// app.use('/api/auth', authRoutes);
+// app.use('/api/books', bookRoutes);
+// app.use('/api/students', studentRoutes);
+// app.use('/api/transactions', transactionRoutes);
+// app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/chat', chatRoutes);
+// app.use('/api/resources', resourceRoutes);
+// app.use('/api/store', storeRoutes);
+
+
+// // =====================================================
+// // 404 HANDLER
+// // =====================================================
+
+// app.use((req, res) => {
+//     res.status(404).json({
+//         message: 'API endpoint not found'
+//     });
+// });
+
+
+// // =====================================================
+// // GLOBAL ERROR HANDLER
+// // =====================================================
+
+// app.use((err, req, res, next) => {
+
+//     console.error('❌ Server Error:', err);
+
+//     if (err.message === 'Not allowed by CORS') {
+//         return res.status(403).json({
+//             message: 'Access denied'
+//         });
+//     }
+
+//     res.status(500).json({
+//         message: 'Internal Server Error'
+//     });
+// });
+
+
+// // =====================================================
+// // DATABASE CONNECTION & SERVER START
+// // =====================================================
+
+// const startServer = async () => {
+//     try {
+
+//         await connectDB();
+
+//         app.listen(PORT, () => {
+//             console.log(`🚀 Server running on port ${PORT}`);
+//         });
+
+//     } catch (err) {
+
+//         console.error(
+//             '❌ Server failed to start due to Database Error:',
+//             err.message
+//         );
+
+//         process.exit(1);
+//     }
+// };
+
+// startServer();
+
+
+
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+
+// =====================================================
+// DATABASE CONNECTION
+// =====================================================
+
+const connectDB = require("./config/db");
+
+// =====================================================
+// ROUTE IMPORTS
+// =====================================================
+
+const bookRoutes = require("./routes/bookRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const authRoutes = require("./routes/authRoutes");
+const studentRoutes = require("./routes/studentRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const resourceRoutes = require("./routes/resourceRoutes");
+const storeRoutes = require("./routes/store");
+
+// =====================================================
+// APP
+// =====================================================
 
 const app = express();
 
+// Render automatically provides PORT
 const PORT = process.env.PORT || 5000;
+
+// Frontend URL from environment variable
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
+// =====================================================
+// CHECK FRONTEND URL
+// =====================================================
+
+if (!FRONTEND_URL) {
+    console.warn(
+        "⚠️ FRONTEND_URL is not configured in environment variables."
+    );
+} else {
+    console.log("🌐 Allowed Frontend:", FRONTEND_URL);
+}
 
 // =====================================================
-// MIDDLEWARE
+// BODY PARSER
 // =====================================================
 
-app.use(express.json({ limit: '1mb' }));
+app.use(
+    express.json({
+        limit: "1mb",
+    })
+);
 
-app.use(express.urlencoded({
-    extended: true,
-    limit: '1mb'
-}));
-
+app.use(
+    express.urlencoded({
+        extended: true,
+        limit: "1mb",
+    })
+);
 
 // =====================================================
 // CORS
 // =====================================================
 
 const allowedOrigins = [
-    FRONTEND_URL
-    // 'http://localhost:8080',
-    // 'http://localhost:3000'
+    FRONTEND_URL,
 ].filter(Boolean);
 
-app.use(cors({
-    origin: function (origin, callback) {
+app.use(
+    cors({
+        origin: function (origin, callback) {
 
-        // Requests without Origin
-        if (!origin) {
-            return callback(null, true);
-        }
+            // Allow requests without Origin
+            // Example: Postman / server-to-server
+            if (!origin) {
+                return callback(null, true);
+            }
 
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
+            // Allow only configured frontend
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-        return callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true
-}));
+            console.error(
+                "❌ Blocked CORS Origin:",
+                origin
+            );
 
+            return callback(
+                new Error("Not allowed by CORS")
+            );
+        },
+
+        credentials: true,
+
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+        ],
+
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+        ],
+    })
+);
 
 // =====================================================
 // ROOT ROUTE
 // =====================================================
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.status(200).json({
-        status: 'success',
-        message: 'CodeSage & Library API is Running...'
+        status: "success",
+        message: "CodeSage & Library API is Running...",
     });
 });
-
 
 // =====================================================
 // API ROUTES
 // =====================================================
 
-app.use('/api/auth', authRoutes);
-app.use('/api/books', bookRoutes);
-app.use('/api/students', studentRoutes);
-app.use('/api/transactions', transactionRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/resources', resourceRoutes);
-app.use('/api/store', storeRoutes);
+// Authentication
+app.use("/api/auth", authRoutes);
 
+// Books
+app.use("/api/books", bookRoutes);
+
+// Students
+app.use("/api/students", studentRoutes);
+
+// Transactions
+app.use("/api/transactions", transactionRoutes);
+
+// Dashboard
+app.use("/api/dashboard", dashboardRoutes);
+
+// Chat
+app.use("/api/chat", chatRoutes);
+
+// Resources
+app.use("/api/resources", resourceRoutes);
+
+// Store
+app.use("/api/store", storeRoutes);
 
 // =====================================================
 // 404 HANDLER
@@ -94,10 +308,9 @@ app.use('/api/store', storeRoutes);
 
 app.use((req, res) => {
     res.status(404).json({
-        message: 'API endpoint not found'
+        message: "API endpoint not found",
     });
 });
-
 
 // =====================================================
 // GLOBAL ERROR HANDLER
@@ -105,37 +318,46 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
 
-    console.error('❌ Server Error:', err);
+    console.error(
+        "❌ Server Error:",
+        err.message
+    );
 
-    if (err.message === 'Not allowed by CORS') {
+    // CORS error
+    if (err.message === "Not allowed by CORS") {
         return res.status(403).json({
-            message: 'Access denied'
+            message: "Access denied",
         });
     }
 
-    res.status(500).json({
-        message: 'Internal Server Error'
+    // Other server errors
+    return res.status(500).json({
+        message: "Internal Server Error",
     });
 });
-
 
 // =====================================================
 // DATABASE CONNECTION & SERVER START
 // =====================================================
 
 const startServer = async () => {
+
     try {
 
+        // Connect MongoDB
         await connectDB();
 
+        // Start server
         app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
+            console.log(
+                `🚀 Server running on port ${PORT}`
+            );
         });
 
     } catch (err) {
 
         console.error(
-            '❌ Server failed to start due to Database Error:',
+            "❌ Server failed to start due to Database Error:",
             err.message
         );
 
@@ -143,4 +365,5 @@ const startServer = async () => {
     }
 };
 
+// Start application
 startServer();
