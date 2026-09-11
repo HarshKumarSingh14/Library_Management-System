@@ -26,7 +26,7 @@ export default function AdminStoreOrders() {
     setLoading(true);
     try {
       // Bina email ke call karenge toh sabhi orders aayenge
-      const response = await fetch("https://library-management-system-fdo2.onrender.com/api/store/orders");
+      const response = await fetch("/api/store/orders");
       if (!response.ok) throw new Error("Failed to fetch orders");
       
       const data = await response.json();
@@ -47,7 +47,7 @@ export default function AdminStoreOrders() {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
     try {
-      const response = await fetch(`https://library-management-system-fdo2.onrender.com/api/store/orders/${orderId}/status`, {
+      const response = await fetch(`/api/store/orders/${orderId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus })

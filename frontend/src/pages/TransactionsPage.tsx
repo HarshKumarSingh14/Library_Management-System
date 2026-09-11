@@ -37,9 +37,9 @@ export default function TransactionsPage() {
     try {
       // Har fetch call mein headers pass karna zaroori hai
       const [sRes, bRes, tRes] = await Promise.all([
-        fetch("https://library-management-system-fdo2.onrender.com/api/students/all", { headers: getAuthHeaders() }),
-        fetch("https://library-management-system-fdo2.onrender.com/api/books", { headers: getAuthHeaders() }),
-        fetch("https://library-management-system-fdo2.onrender.com/api/transactions/active", { headers: getAuthHeaders() })
+        fetch("/api/students/all", { headers: getAuthHeaders() }),
+        fetch("/api/books", { headers: getAuthHeaders() }),
+        fetch("/api/transactions/active", { headers: getAuthHeaders() })
       ]);
 
       if (sRes.status === 401 || bRes.status === 401) {
@@ -92,7 +92,7 @@ export default function TransactionsPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/issue", {
+      const res = await fetch("/api/transactions/issue", {
         method: "POST",
         headers: getAuthHeaders(), // Yahan bhi Token zaroori hai
         body: JSON.stringify({
@@ -128,7 +128,7 @@ export default function TransactionsPage() {
     if(!window.confirm(confirmMsg)) return;
 
     try {
-      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/return", {
+      const res = await fetch("/api/transactions/return", {
         method: "POST",
         headers: getAuthHeaders(), // Yahan bhi Token zaroori hai
         body: JSON.stringify({
@@ -138,10 +138,10 @@ export default function TransactionsPage() {
       });
       
       if(res.ok) {
-        toast.success("Book successfully return ho gayi.");
+        toast.success("Book successfully returned.");
         fetchData(); // List refresh
       } else {
-        toast.error("Return fail ho gaya.");
+        toast.error("Return failed.");
       }
     } catch (err) {
       toast.error("Network error.");

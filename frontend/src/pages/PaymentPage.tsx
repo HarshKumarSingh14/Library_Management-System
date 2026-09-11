@@ -48,8 +48,8 @@ export default function PaymentPage() {
     setStatus('processing');
     
     const apiEndpoint = type === 'book' 
-      ? "https://library-management-system-fdo2.onrender.com/api/store/checkout" 
-      : "https://library-management-system-fdo2.onrender.com/api/library/pay-fine";
+      ? "/api/store/checkout" 
+      : "/api/library/pay-fine";
 
     try {
       const response = await fetch(apiEndpoint, {

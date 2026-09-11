@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Direct Backend URL - No .env required
 const API_URL =
-  "https://library-management-system-fdo2.onrender.com/api/auth";
+  "/api/auth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-const API_URL = "https://library-management-system-fdo2.onrender.com/api/books";
+const API_URL = "/api/books";
 const emptyBook = { title: "", author: "", category: "", isbn: "", total_copies: 1, available_copies: 1 };
 
 export default function BooksPage() {

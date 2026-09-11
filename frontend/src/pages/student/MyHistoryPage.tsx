@@ -25,7 +25,7 @@ export default function MyHistoryPage() {
       
       try {
         setLoading(true);
-        const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/transactions/student/${user.id}`);
+        const res = await fetch(`/api/transactions/student/${user.id}`);
         
         if (!res.ok) throw new Error("Failed to load history");
         

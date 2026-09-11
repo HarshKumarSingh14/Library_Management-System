@@ -19,7 +19,7 @@ interface StoreBook {
 export default function StudentStorePage() {
   const { user } = useAuth();
   const navigate = useNavigate(); 
-  const API_BASE = "https://library-management-system-fdo2.onrender.com/api/store";
+  const API_BASE = "/api/store";
 
   const [books, setBooks] = useState<StoreBook[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

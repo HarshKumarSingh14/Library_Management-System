@@ -31,7 +31,7 @@ export default function AdminPurchaseHistoryPage() {
   const fetchAdminHistory = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://library-management-system-fdo2.onrender.com/api/store/orders");
+      const response = await fetch("/api/store/orders");
       if (!response.ok) throw new Error("Failed to load history");
 
       const data = await response.json();
@@ -60,7 +60,7 @@ export default function AdminPurchaseHistoryPage() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`https://library-management-system-fdo2.onrender.com/api/store/orders/${orderId}`, {
+      const response = await fetch(`/api/store/orders/${orderId}`, {
         method: "DELETE"
       });
       const data = await response.json();
@@ -87,7 +87,7 @@ export default function AdminPurchaseHistoryPage() {
     if (!confirmClear) return;
 
     try {
-      const response = await fetch("https://library-management-system-fdo2.onrender.com/api/store/orders/clear-history", {
+      const response = await fetch("/api/store/orders/clear-history", {
         method: "DELETE"
       });
       const data = await response.json();

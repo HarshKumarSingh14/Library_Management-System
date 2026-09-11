@@ -29,7 +29,7 @@ export default function CampusPickupsPage() {
 
     setLoading(true);
     try {
-      const response = await fetch(`https://library-management-system-fdo2.onrender.com/api/store/orders?email=${user.email}`);
+      const response = await fetch(`/api/store/orders?email=${user.email}`);
       
       if (!response.ok) throw new Error("Failed to load records");
       

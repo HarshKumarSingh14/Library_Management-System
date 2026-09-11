@@ -17,7 +17,7 @@ export default function AdminRequests() {
   // Fetch pending requests
   const fetchRequests = async () => {
     try {
-      const res = await fetch("https://library-management-system-fdo2.onrender.com/api/transactions/pending");
+      const res = await fetch("/api/transactions/pending");
       const data = await res.json();
       setRequests(data);
     } finally {
@@ -30,7 +30,7 @@ export default function AdminRequests() {
   const handleAction = async (id: number, action: 'approve' | 'reject') => {
     try {
       const endpoint = action === 'approve' ? 'approve' : 'reject';
-      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/transactions/${endpoint}`, {
+      const res = await fetch(`/api/transactions/${endpoint}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ transactionId: id }),

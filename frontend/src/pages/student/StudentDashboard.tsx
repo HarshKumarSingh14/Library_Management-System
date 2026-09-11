@@ -60,7 +60,7 @@ export default function StudentDashboard() {
         setLoading(true);
         const token = localStorage.getItem("library_token"); 
 
-        const response = await fetch(`https://library-management-system-fdo2.onrender.com/api/dashboard/student/${userId}`, {
+        const response = await fetch(`/api/dashboard/student/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

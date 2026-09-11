@@ -22,7 +22,7 @@ export default function TrackOrdersPage() {
     setLoading(true);
     try {
       // Humein saare orders milenge, usme se is ID ko dhundenge
-      const response = await fetch(`https://library-management-system-fdo2.onrender.com/api/store/orders`);
+      const response = await fetch(`/api/store/orders`);
       if (!response.ok) throw new Error("Failed to load status");
       
       const allOrders = await response.json();

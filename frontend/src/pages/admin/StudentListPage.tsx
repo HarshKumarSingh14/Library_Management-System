@@ -53,7 +53,7 @@ export default function StudentsListPage() {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://library-management-system-fdo2.onrender.com/api/students/all", {
+      const response = await fetch("/api/students/all", {
         headers: getAuthHeaders()
       });
 
@@ -96,7 +96,7 @@ export default function StudentsListPage() {
     }
 
     try {
-      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/students/${selectedStudent.id}`, {
+      const res = await fetch(`/api/students/${selectedStudent.id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(editForm)
@@ -120,7 +120,7 @@ export default function StudentsListPage() {
     setHistoryOpen(true);
     setHistoryLoading(true);
     try {
-      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/transactions/student/${student.id}`, {
+      const res = await fetch(`/api/transactions/student/${student.id}`, {
         headers: getAuthHeaders()
       });
       const data = await res.json();
@@ -136,7 +136,7 @@ export default function StudentsListPage() {
     if (!selectedStudent) return;
     if (!window.confirm("Are you sure? This will delete all history.")) return;
     try {
-       const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/transactions/student/${selectedStudent.id}`, {
+       const res = await fetch(`/api/transactions/student/${selectedStudent.id}`, {
          method: 'DELETE',
          headers: getAuthHeaders()
        });
@@ -154,7 +154,7 @@ export default function StudentsListPage() {
   const handleDeleteAccount = async (id: number) => {
     if(!window.confirm("Delete student account permanently?")) return;
     try {
-      const res = await fetch(`https://library-management-system-fdo2.onrender.com/api/students/${id}`, { 
+      const res = await fetch(`/api/students/${id}`, { 
         method: 'DELETE', 
         headers: getAuthHeaders()
       });
